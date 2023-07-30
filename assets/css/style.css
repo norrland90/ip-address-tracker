@@ -40,22 +40,34 @@
   }
 }
 
+/* GENERAL */
+
 body {
   font-family: var(--ff-primary);
 }
 
+main {
+  position: relative;
+}
+
+/* HEADER */
+
 .header {
   background-image: url('../images/pattern-bg-mobile.png');
+  background-repeat: no-repeat;
+  background-size: cover;
+  height: 20rem;
   text-align: center;
-  min-height: 16rem;
 }
 
 .header__page-heading {
+  padding: 2rem;
   font-size: var(--fs-xl);
   color: var(--clr-light);
   font-weight: 500;
-  padding: 2rem;
 }
+
+/* FORM */
 
 .form {
   display: grid;
@@ -67,10 +79,10 @@ body {
 }
 
 .form__input {
-  border: 0;
   padding: 1em;
   border-radius: var(--border-radius) 0 0 var(--border-radius);
   font-size: var(--fs-m);
+  border: 0;
 }
 
 .form__input:focus {
@@ -98,10 +110,87 @@ body {
 }
 
 @media screen and (min-width: 700px) {
+  .header {
+    background-image: url('../images/pattern-bg-desktop.png');
+  }
+}
+
+@media screen and (min-width: 1000px) {
+  .header {
+    height: 16rem;
+  }
 }
 
 /* MAP SECTION */
 
 .map {
-  height: 35rem;
+  height: calc(100vh - 20rem - 1rem);
+  z-index: 1;
 }
+
+@media screen and (min-width: 1000px) {
+  .map {
+    height: calc(100vh - 16rem - 1rem);
+  }
+}
+
+/* RESULTS */
+
+.results {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1rem;
+
+  position: absolute;
+  top: -8rem;
+  left: 0;
+  right: 0;
+  z-index: 10;
+
+  background-color: var(--clr-light);
+  width: max-content;
+  max-width: 90%;
+  margin: 0 auto;
+  padding: 1.5rem;
+  border-radius: var(--border-radius);
+}
+
+.results__item {
+  text-align: center;
+}
+
+.results__heading {
+  margin-bottom: 0.2rem;
+  font-size: var(--fs-s);
+  color: var(--clr-dark-100);
+  font-weight: 500;
+  text-transform: uppercase;
+}
+
+.results__value {
+  font-size: var(--fs-l);
+  color: var(--clr-dark-500);
+  font-weight: 500;
+}
+
+@media screen and (min-width: 1000px) {
+  .results {
+    grid-template-columns: repeat(4, 1fr);
+
+    width: 70rem;
+    top: -4rem;
+  }
+
+  .results__item {
+    text-align: left;
+    padding-left: 1.5rem;
+  }
+
+  .results__item:nth-child(2),
+  .results__item:nth-child(3),
+  .results__item:nth-child(4) {
+    border-left: 1px solid var(--clr-dark-100);
+  }
+}
+
+/* FOOTER */
