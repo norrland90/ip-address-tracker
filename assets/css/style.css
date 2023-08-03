@@ -17,6 +17,7 @@
   --clr-dark-100: hsla(0, 0%, 59%, 1);
   --clr-dark-300: hsla(0, 0%, 25%, 1);
   --clr-dark-400: hsla(0, 0%, 17%, 1);
+  --clr-dark-400-transp: hsla(0, 0%, 17%, 0.1);
 
   /* Fonts */
   --ff-primary: 'Rubik', sans-serif;
@@ -109,6 +110,15 @@ main {
   background-color: var(--clr-dark-400);
 }
 
+.header__form-error {
+  display: none;
+  font-size: 0.8rem;
+  font-style: italic;
+  text-align: left;
+  color: red;
+  margin-top: 0.3rem;
+}
+
 @media screen and (min-width: 700px) {
   .header {
     background-image: url('../images/pattern-bg-desktop.png');
@@ -149,10 +159,13 @@ main {
 
   background-color: var(--clr-light);
   width: max-content;
+  min-width: 15rem;
   max-width: 90%;
   margin: 0 auto;
   padding: 1.5rem;
   border-radius: var(--border-radius);
+
+  box-shadow: 0px 3px 10px var(--clr-dark-400-transp);
 }
 
 .results__item {

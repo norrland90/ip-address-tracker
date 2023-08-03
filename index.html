@@ -29,6 +29,7 @@
           name="query"
           id="query"
           placeholder="Search for any IP address or domain"
+          required
         />
         <button type="submit" class="form__submit-btn">
           <svg
@@ -43,25 +44,26 @@
             <path fill="none" stroke="#FFF" stroke-width="3" d="M2 1l6 6-6 6" />
           </svg>
         </button>
+        <p class="header__form-error">Please enter IP address or domain.</p>
       </form>
     </header>
     <main>
       <section class="results">
         <div class="results__item">
           <h2 class="results__heading">Ip address</h2>
-          <p class="results__value">192.212.174.121</p>
+          <p class="results__value">-</p>
         </div>
         <div class="results__item">
           <h2 class="results__heading">Location</h2>
-          <p class="results__value">Brooklyn, NY 10001</p>
+          <p class="results__value">-</p>
         </div>
         <div class="results__item">
           <h2 class="results__heading">Timezone</h2>
-          <p class="results__value">UTC -05.00</p>
+          <p class="results__value">-</p>
         </div>
         <div class="results__item">
           <h2 class="results__heading">ISP</h2>
-          <p class="results__value">SpaceX Starlink</p>
+          <p class="results__value">-</p>
         </div>
       </section>
       <section class="map" id="map"></section>
