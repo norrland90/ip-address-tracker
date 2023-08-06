@@ -158,9 +158,13 @@ function addDataToDOM(data) {
 function addErrorToDOM(err) {
   const resultsDiv = document.querySelector('.results');
   resultsDiv.innerHTML = '';
-  resultsDiv.appendChild(
-    createResultsDiv('error', `${err.message}. Please try again!`)
+  resultsDiv.style.gridTemplateColumns = '1fr';
+  const errorDiv = createResultsDiv(
+    'error',
+    `${err.message}. Please try again!`
   );
+  errorDiv.style.textAlign = 'center';
+  resultsDiv.appendChild(errorDiv);
 }
 
 function createResultsDiv(heading, value) {

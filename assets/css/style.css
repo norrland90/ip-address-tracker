@@ -189,8 +189,9 @@ main {
 @media screen and (min-width: 1000px) {
   .results {
     grid-template-columns: repeat(4, 1fr);
+    justify-content: center;
 
-    width: 70rem;
+    max-width: 70rem;
     top: -4rem;
   }
 
