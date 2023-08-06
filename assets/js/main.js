@@ -1,7 +1,13 @@
-const apiKey = 'at_2XSaB2v4gzXs2VRZGVq19hE085DYp';
+// GLOBAL VARIABLES
+const form = document.querySelector('.form');
+const errorMessage = document.querySelector('.header__form-error');
+const formInput = document.querySelector('.form__input');
 
 // CREATE MAP
-const map = L.map('map').setView([51.505, -0.09], 13);
+const map = L.map('map', {
+  center: [51.505, -0.09],
+  zoom: 13,
+});
 
 const locationIcon = L.icon({
   iconUrl: 'assets/images/icon-location.svg',
@@ -17,22 +23,25 @@ L.tileLayer
 
 const marker = L.marker([51.505, -0.09], { icon: locationIcon }).addTo(map);
 
-// GET FORM DATA
-const form = document.querySelector('.form');
-const errorMessage = document.querySelector('.header__form-error');
-const formInput = document.querySelector('.form__input');
+// CHANGE LOCATION ON MAP
+function changeLocationOnMap(lat, lon) {
+  map.flyTo([lat, lon], 13, {
+    duration: 2,
+  });
+  marker.setLatLng([lat, lon]);
+}
 
+// GET FORM DATA
 function onSubmit(e) {
   e.preventDefault();
   hideFormInputError();
 
-  const query = formInput.value;
+  const query = editQuery(formInput.value);
+  formInput.value = query;
 
-  // Lägga in form validation. Kolla om man skrivit ip eller domän, samt även kolla om man skriver fel. Efter detta kan query skickas in i getData; den ska då skicka den del som ska adderas till apiURL innan fetch. Samma data oavsett om man söker med ip eller domän, varför jag inte behöver veta vilket "söksätt" det är.
-
-  const validInput = validateInput(query);
-  if (validInput) {
-    getData(validInput);
+  const validQuery = validateInputAndGetQuery(query);
+  if (validQuery) {
+    getData(validQuery);
   } else {
     showFormInputError();
   }
@@ -50,7 +59,26 @@ function hideFormInputError() {
   formInput.style.border = '0';
 }
 
-function validateInput(query) {
+// Function to delete www., https:// and http:// if user enter it
+// Does not check for typos, like ww., htt://.
+function editQuery(queryOriginal) {
+  let query = queryOriginal.toLowerCase();
+  if (query[query.length - 1] === '/') {
+    query = query.substr(0, query.length - 1);
+  }
+  if (query.substr(0, 4) === 'www.') {
+    query = query.substr(4);
+  } else if (query.substr(0, 8) === 'https://') {
+    query = query.substr(8);
+  } else if (query.substr(0, 7) === 'http://') {
+    query = query.substr(7);
+  } else {
+    query = query;
+  }
+  return query;
+}
+
+function validateInputAndGetQuery(query) {
   // Checks the format of ip addresses, but not if actually valid ip addresses
   const regExpIpFour = /^\d+\.\d+\.\d+\.\d+$/;
   const regExpIpSix = /^\w+\:\w+\:\w+\:\w+\:\w+\:\w+\:\w+\:\w+$/;
@@ -60,37 +88,56 @@ function validateInput(query) {
 
   // Check type entered
   if (regExpIpFour.test(query) || regExpIpSix.test(query)) {
-    console.log('entered IP address');
-    return `ipAddress=${query}`;
+    return `&ipAddress=${query}`;
   } else if (regExpDomain.test(query)) {
-    console.log('entered domain');
-    return `domain=${query}`;
+    return `&domain=${query}`;
   } else {
-    console.log('not ip nor domain');
     return false;
   }
 }
 
-function getData(query) {
-  const apiURL = `https://geo.ipify.org/api/v2/country,city?apiKey=${apiKey}`;
-  fetch(`https://geo.ipify.org/api/v2/country,city?apiKey=${apiKey}&${query}`)
-    .then((response) => {
-      if (response.ok) {
-        return response.json();
-      } else {
-        throw new Error(`No data found`);
-      }
-    })
-    .then((data) => {
-      console.log(data);
+async function getData(query = '') {
+  const apiKey = 'at_2XSaB2v4gzXs2VRZGVq19hE085DYp';
+  const apiURL = `https://geo.ipify.org/api/v2/country,city?apiKey=${apiKey}${query}`;
+
+  try {
+    const response = await fetch(apiURL);
+    if (response.ok) {
+      const data = await response.json();
       addDataToDOM(data);
       changeLocationOnMap(data.location.lat, data.location.lng);
-    })
-    .catch((err) => {
-      addErrorToDOM(err);
-    });
+    } else {
+      throw new Error('No data found');
+    }
+  } catch (error) {
+    addErrorToDOM(error);
+  }
 }
 
+// Same but with .then / .catch
+
+// function getData(query) {
+//   const apiKey = 'at_2XSaB2v4gzXs2VRZGVq19hE085DYp';
+//   const apiURL = `https://geo.ipify.org/api/v2/country,city?apiKey=${apiKey}&${query}`;
+//   fetch(apiURL)
+//     .then((response) => {
+//       if (response.ok) {
+//         return response.json();
+//       } else {
+//         throw new Error(`No data found`);
+//       }
+//     })
+//     .then((data) => {
+//       console.log(data);
+//       addDataToDOM(data);
+//       changeLocationOnMap(data.location.lat, data.location.lng);
+//     })
+//     .catch((err) => {
+//       addErrorToDOM(err);
+//     });
+// }
+
+// ADD DATA TO DOM
 function addDataToDOM(data) {
   const resultsDiv = document.querySelector('.results');
   resultsDiv.innerHTML = '';
@@ -130,7 +177,10 @@ function createResultsDiv(heading, value) {
   return div;
 }
 
-function changeLocationOnMap(lat, lon) {
-  map.flyTo([lat, lon], 13);
-  marker.setLatLng([lat, lon]).update();
+// On page load
+
+function init() {
+  // Run function on page load. If the IP or domain are not specified, then ip address defaults to client public IP address.
+  getData();
 }
+document.addEventListener('DOMContentLoaded', init);
